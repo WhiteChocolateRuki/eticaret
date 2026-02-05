@@ -26,6 +26,18 @@ const ProductList = () => {
 
     const columns = [
         {
+            title: 'Image',
+            dataIndex: 'image',
+            key: 'image',
+            render: (image, record) => image ? (
+                <img
+                    src={`data:${record.imageContentType || 'image/png'};base64,${image}`}
+                    alt={record.name}
+                    style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
+                />
+            ) : null
+        },
+        {
             title: 'Product Name',
             dataIndex: 'name',
             key: 'name'

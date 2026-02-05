@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization; // 1. Added this library
 using DistroProject.API.Data;
 using DistroProject.API.Models;
+using DistroProject.API.DTOs;
 
 namespace DistroProject.API.Controllers;
 
@@ -26,9 +27,29 @@ public class ProductsController : ControllerBase
 
     // ONLY ADMINS CAN ADD PRODUCTS
     [HttpPost]
-    [Authorize(Roles = "Admin")] // 2. Locked the door: Only "Admin" role can enter
-    public async Task<ActionResult<Product>> PostProduct(Product product)
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<Product>> PostProduct([FromForm] DTOs.ProductUploadDto productDto)
     {
+        var product = new Product
+        {
+            Name = productDto.Name,
+            Price = productDto.Price,
+            UnitType = productDto.UnitType,
+            Stock = productDto.Stock,
+            IsActive = true,
+            CreatedAt = DateTime.Now
+        };
+
+        if (productDto.ImageFile != null && productDto.ImageFile.Length > 0)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await productDto.ImageFile.CopyToAsync(memoryStream);
+                product.Image = memoryStream.ToArray();
+                product.ImageContentType = productDto.ImageFile.ContentType;
+            }
+        }
+
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
 

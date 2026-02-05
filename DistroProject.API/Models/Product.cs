@@ -17,5 +17,10 @@ public class Product
 
     public bool IsActive { get; set; } = true;
 
+    [Column(TypeName = "varbinary(MAX)")] // Explicit definition for large images
+    public byte[]? Image { get; set; }
+
+    public string? ImageContentType { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 }
