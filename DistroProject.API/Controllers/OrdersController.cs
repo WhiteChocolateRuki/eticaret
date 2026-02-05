@@ -9,7 +9,7 @@ namespace DistroProject.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize] // Sisteme girmeyen sipariş sistemine dokunamaz!
+[Authorize] // Only authenticated users can access the order system!
 public class OrdersController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -19,28 +19,28 @@ public class OrdersController : ControllerBase
         _context = context;
     }
 
-    // 1. Sipariş Oluştur (Herkes - Müşteriler)
+    // 1. Create Order (Everyone - Customers)
     [HttpPost]
     public async Task<ActionResult<Order>> CreateOrder(Order order)
     {
-        // Siparişi veren kişinin ID'sini token'dan çekiyoruz
+        // Get the user ID from the token
         var userId = User.FindFirst("userId")?.Value;
         if (userId != null) order.CustomerId = int.Parse(userId);
 
-        // Ürün fiyatını çekip toplam tutarı hesaplayalım
+        // Get product price and calculate total amount
         var product = await _context.Products.FindAsync(order.ProductId);
-        if (product == null) return BadRequest("Ürün bulunamadı!");
+        if (product == null) return BadRequest("Product not found!");
 
         order.TotalPrice = product.Price * order.Quantity;
         order.OrderDate = DateTime.Now;
-        order.Status = "Pending"; // Onay bekliyor
+        order.Status = "Pending"; // Waiting for approval
 
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
         return Ok(order);
     }
 
-    // 2. Bekleyen Siparişleri Gör (Sadece Admin)
+    // 2. See Pending Orders (Admin Only)
     [HttpGet("pending")]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<Order>>> GetPendingOrders()
@@ -52,7 +52,7 @@ public class OrdersController : ControllerBase
             .ToListAsync();
     }
 
-    // 3. Siparişi Şoföre Ata (Sadece Admin)
+    // 3. Assign Order to Driver (Admin Only)
     [HttpPut("assign-driver/{orderId}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AssignDriver(int orderId, int driverId)
@@ -61,13 +61,13 @@ public class OrdersController : ControllerBase
         if (order == null) return NotFound();
 
         order.DriverId = driverId;
-        order.Status = "Shipped"; // Yola çıktı
+        order.Status = "Shipped"; // Shipped
 
         await _context.SaveChangesAsync();
-        return Ok(new { message = "Sipariş şoföre atandı ve yola çıktı!" });
+        return Ok(new { message = "Order assigned to driver and shipped!" });
     }
 
-    // 4. Şoförün Kendi Teslimat Listesi (Sadece Driver)
+    // 4. Driver's Own Delivery List (Driver Only)
     [HttpGet("my-deliveries")]
     [Authorize(Roles = "Driver")]
     public async Task<ActionResult<IEnumerable<Order>>> GetMyDeliveries()
@@ -79,49 +79,49 @@ public class OrdersController : ControllerBase
             .ToListAsync();
     }
 
-    // 5. Siparişi Teslim Et ve Stoktan Düş (Sadece Driver)
+    // 5. Deliver Order and Deduct from Stock (Driver Only)
 [HttpPut("deliver-order/{orderId}")]
 [Authorize(Roles = "Driver")]
 public async Task<IActionResult> DeliverOrder(int orderId, [FromQuery] int actualDeliveredQuantity)
 {
-    // 1. Siparişi ve Ürünü bul
+    // 1. Find Order and Product
     var order = await _context.Orders.Include(o => o.Product).FirstOrDefaultAsync(o => o.Id == orderId);
     
-    if (order == null) return NotFound("Sipariş bulunamadı!");
-    if (order.Status != "Shipped") return BadRequest("Sipariş teslimat aşamasında değil!");
+    if (order == null) return NotFound("Order not found!");
+    if (order.Status != "Shipped") return BadRequest("Order is not in shipping stage!");
 
-    // 2. Miktar Kontrolü
+    // 2. Quantity Check
     if (actualDeliveredQuantity > order.Quantity)
-        return BadRequest("Sipariş edilenden daha fazla ürün teslim edilemez!");
+        return BadRequest("Cannot deliver more items than ordered!");
 
-    // 3. Teslim Edilen Miktarı Kaydet
+    // 3. Save Delivered Quantity
     order.DeliveredQuantity = actualDeliveredQuantity;
 
-    // 4. Stoktan Gerçek Teslim Edilen Kadar Düş
+    // 4. Deduct Actual Delivered Quantity from Stock
     if (order.Product != null)
     {
         if (order.Product.Stock < actualDeliveredQuantity)
-            return BadRequest("Yetersiz stok!");
+            return BadRequest("Insufficient stock!");
             
         order.Product.Stock -= actualDeliveredQuantity;
     }
 
-    // 5. Durumu Belirle (Fark varsa Partial, yoksa Delivered)
+    // 5. Determine Status (Partial if difference exists, otherwise Delivered)
     if (actualDeliveredQuantity < order.Quantity)
     {
-        order.Status = "PartialDelivered"; // Kısmi Teslimat
+        order.Status = "PartialDelivered"; // Partial Delivery
     }
     else
     {
-        order.Status = "Delivered"; // Tam Teslimat
+        order.Status = "Delivered"; // Full Delivery
     }
 
     await _context.SaveChangesAsync();
 
     return Ok(new { 
         message = order.Status == "PartialDelivered" 
-            ? $"Eksik teslimat yapıldı: {order.Quantity - actualDeliveredQuantity} adet eksik." 
-            : "Sipariş tam olarak teslim edildi.",
+            ? $"Partial delivery made: {order.Quantity - actualDeliveredQuantity} items missing." 
+            : "Order delivered successfully.",
         status = order.Status,
         kalanStok = order.Product?.Stock 
     });

@@ -4,14 +4,14 @@ namespace DistroProject.API.Models;
 
 public class Product
 {
-    public int Id { get; set; } // Birincil Anahtar (Primary Key)
+    public int Id { get; set; } // Primary Key
     
     public string Name { get; set; } = string.Empty;
 
-    [Column(TypeName = "decimal(18,2)")] // Fiyat hassasiyeti uyarısını çözmek için
+    [Column(TypeName = "decimal(18,2)")] // To resolve precision warning
     public decimal Price { get; set; }
 
-    public string UnitType { get; set; } = "Adet"; // Kg, Litre, Adet
+    public string UnitType { get; set; } = "Piece"; // Kg, Liter, Piece
 
     public int Stock { get; set; }
 

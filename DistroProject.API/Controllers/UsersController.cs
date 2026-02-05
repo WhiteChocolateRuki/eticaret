@@ -35,7 +35,7 @@ public class UsersController : ControllerBase
 
         if (user == null || user.PasswordHash != loginUser.PasswordHash) 
         {
-            return BadRequest("E-posta veya şifre hatalı!");
+            return BadRequest("Invalid email or password!");
         }
 
         var tokenHandler = new JwtSecurityTokenHandler();

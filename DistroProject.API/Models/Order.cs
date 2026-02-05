@@ -7,22 +7,22 @@ public class Order
     public int Id { get; set; }
     
     [Required]
-    public int ProductId { get; set; } // Hangi ürün sipariş edildi?
-    public Product? Product { get; set; } // Ürün detaylarına ulaşmak için
+    public int ProductId { get; set; } // Which product was ordered?
+    public Product? Product { get; set; } // To access product details
 
     [Required]
-    public int CustomerId { get; set; } // Siparişi hangi müşteri verdi?
+    public int CustomerId { get; set; } // Which customer placed the order?
     public User? Customer { get; set; }
 
-    public int Quantity { get; set; } // Kaç adet?
-    public decimal TotalPrice { get; set; } // Toplam tutar
+    public int Quantity { get; set; } // How many items?
+    public decimal TotalPrice { get; set; } // Total amount
     
     public string Status { get; set; } = "Pending"; // Pending, Approved, Shipped, Delivered
     public DateTime OrderDate { get; set; } = DateTime.Now;
 
-    // Lojistik kısmı için:
-    public int? DriverId { get; set; } // Bu siparişi hangi şoför teslim edecek?
+    // For Logistics part:
+    public int? DriverId { get; set; } // Which driver will deliver this order?
     public User? Driver { get; set; }
 
-    public int DeliveredQuantity { get; set; } // Şoförün gerçekten teslim ettiği miktar
+    public int DeliveredQuantity { get; set; } // Quantity actually delivered by the driver
 }

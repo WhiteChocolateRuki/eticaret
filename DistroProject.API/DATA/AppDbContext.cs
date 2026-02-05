@@ -9,7 +9,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Product> Products { get; set; }
     
-    // EKSİK OLAN SATIR BUYDU:
+    // THIS WAS THE MISSING LINE:
     public DbSet<User> Users { get; set; } 
     public DbSet<Order> Orders { get; set; }
 }

@@ -7,13 +7,25 @@ using OpenApiModels = Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Veritabanı Bağlantısı
+// 1. Database Connection
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// --- CORS SETTINGS (SERVICE DEFINITION) ---
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()   // Allow requests from any URL
+                  .AllowAnyMethod()   // Allow all methods: GET, POST, PUT, DELETE
+                  .AllowAnyHeader();  // Allow all headers
+        });
+});
+
 builder.Services.AddControllers();
 
-// 2. JWT Ayarları
+// 2. JWT Settings
 var key = Encoding.ASCII.GetBytes("B374A26A71448593AA2744749EF41EE3"); 
 builder.Services.AddAuthentication(x =>
 {
@@ -33,14 +45,14 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-// 3. Swagger ve Kilit Butonu
+// 3. Swagger and Lock Button
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiModels.OpenApiInfo { Title = "Distro API", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiModels.OpenApiSecurityScheme
     {
-        Description = "JWT Authorization. Örn: 'Bearer 12345abcdef'",
+        Description = "JWT Authorization. Example: 'Bearer 12345abcdef'",
         Name = "Authorization",
         In = OpenApiModels.ParameterLocation.Header,
         Type = OpenApiModels.SecuritySchemeType.ApiKey,
@@ -55,7 +67,8 @@ builder.Services.AddSwaggerGen(c =>
             },
             new string[] {}
         }
-    });
+    }
+    );
 });
 
 var app = builder.Build();
@@ -66,7 +79,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// --- CORS USAGE (MIDDLEWARE) ---
+// Note: UseCors must be after UseRouting and before UseAuthentication.
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll"); // Activating CORS policy here
+
 app.UseAuthentication(); 
 app.UseAuthorization();  
 app.MapControllers();
