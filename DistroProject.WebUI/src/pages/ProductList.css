@@ -1,0 +1,168 @@
+.product-page-container {
+    padding: 24px;
+    background-color: transparent;
+    min-height: 100vh;
+}
+
+/* Sidebar Text Color Override */
+.filter-sidebar .ant-checkbox-wrapper {
+    color: #f9b17a !important;
+    font-weight: 500;
+}
+
+.filter-sidebar .ant-checkbox-wrapper:hover {
+    color: #ffcd9e !important;
+}
+
+.filter-sidebar {
+    background: #576f9d;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
+}
+
+.filter-section {
+    margin-bottom: 24px;
+}
+
+.filter-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #fff;
+    /* White title for contrast on blue bg */
+    border-bottom: 2px solid #f9b17a;
+    display: inline-block;
+    padding-bottom: 4px;
+}
+
+.product-card {
+    background: #576f9d;
+    border-radius: 20px;
+    /* Yuvarlak border */
+    padding: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    /* Şık gölge */
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #576f9d;
+    /* Match background */
+    position: relative;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    border-color: #f9b17a;
+}
+
+.product-image-container {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 16px;
+    /* İç fotoğrafta da border */
+    overflow: hidden;
+    margin-bottom: 16px;
+    border: 2px solid #f9b17a;
+    /* Fotoğraf çerçevesi */
+    padding: 4px;
+    /* Çerçeve ile resim arası boşluk */
+    background: #576f9d;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.product-info {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    /* Align top in case name wraps */
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.product-name {
+    font-size: 1.0rem;
+    font-weight: 700;
+    color: #fff;
+    /* White text for contrast on blue bg */
+    line-height: 1.3;
+    text-align: left;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-right: 8px;
+    /* Space between name and price */
+    flex: 1;
+    /* Allow name to take available space */
+}
+
+.product-price {
+    font-size: 1.1rem;
+    color: #f9b17a;
+    font-weight: 800;
+    white-space: nowrap;
+    /* Prevent price from wrapping */
+    text-align: right;
+    margin-bottom: 0;
+    /* Remove bottom margin as it's in a flex row */
+}
+
+.add-to-cart-btn {
+    width: 100%;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    height: 40px !important;
+    background: #2d2250 !important;
+    border: none !important;
+    color: white !important;
+    transition: all 0.3s ease !important;
+}
+
+.add-to-cart-btn:hover {
+    background: #f9b17a !important;
+    color: #2d2250 !important;
+    transform: scale(1.02);
+}
+
+/* Responsive Grid Adjustments if needed */
+@media (max-width: 768px) {
+    .product-page-container {
+        padding: 12px;
+    }
+
+    .filter-sidebar {
+        margin-bottom: 16px;
+    }
+}
+
+/* Slider Tooltip styling */
+.ant-slider-tooltip .ant-tooltip-inner {
+    background-color: #2d2250 !important;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.ant-slider-tooltip .ant-tooltip-arrow::before {
+    background-color: #2d2250 !important;
+}

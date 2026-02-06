@@ -1,5 +1,7 @@
 import { ConfigProvider, Layout } from 'antd';
+import { Routes, Route } from 'react-router-dom';
 import ProductList from './pages/ProductList';
+import Home from './pages/Home';
 import Header from './components/Header';
 
 function App() {
@@ -11,14 +13,18 @@ function App() {
           colorBgBase: '#2d2250',
           colorTextBase: '#ffffff',
           colorBgContainer: '#576f9d',
-          // Note: Ant Design might use colorBgContainer for card backgrounds, 
-          // let's ensure text on top of it is readable.
+
         },
       }}
     >
-      <div className="App">
-        <Header />
-        <ProductList />
+      <div className="app-container">
+        <div className="content-container">
+          <Header />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/products" element={<ProductList />} />
+          </Routes>
+        </div>
       </div>
     </ConfigProvider>
   );

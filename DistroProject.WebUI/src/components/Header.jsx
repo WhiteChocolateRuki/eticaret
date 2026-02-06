@@ -1,5 +1,6 @@
 import React from 'react';
 import { Layout, Typography, Flex, Button, Input } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCartOutlined, SearchOutlined } from '@ant-design/icons';
 import logo from '../assets/with-back.png';
 
@@ -7,15 +8,16 @@ const { Header: AntHeader } = Layout;
 const { Title } = Typography;
 
 const Header = () => {
+    const navigate = useNavigate();
     return (
         <AntHeader style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backgroundColor: 'var(--color-bg-container)', // Using the card/panel color for header background
+            backgroundColor: 'transparent', // Transparent to show the inner background
             padding: '0 24px',
             marginBottom: '24px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+            // boxShadow: '0 2px 8px rgba(0,0,0,0.15)' // Removed shadow for cleaner look
         }}>
             {/* Left: Logo and Brand */}
             <Flex align="center" gap="small">
@@ -27,26 +29,29 @@ const Header = () => {
 
             {/* Center: Navigation and Cart */}
             <Flex align="center" gap="large">
-                <Button type="link" style={{ color: '#fff' }}>Anasayfa</Button>
-                <Button type="link" style={{ color: '#fff' }}>Ürünler</Button>
-                <Button type="link" style={{ color: '#fff' }}>Hakkımızda</Button>
-                <Button type="text" icon={<ShoppingCartOutlined style={{ fontSize: '20px', color: '#fff' }} />} />
+                <Button type="link" onClick={() => navigate('/')} style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Anasayfa</Button>
+                <Button type="link" onClick={() => navigate('/products')} style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Ürünler</Button>
+                {/* User asked for Categories to also go to Products for now, or maybe they meant the same link */}
+                <Button type="link" onClick={() => navigate('/products')} style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Kategoriler</Button>
+                <Button type="link" style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Hakkımızda</Button>
+                <Button type="text" icon={<ShoppingCartOutlined style={{ fontSize: '20px', color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }} />} />
             </Flex>
 
             <div style={{ paddingLeft: '20px' }}>
                 <Input
                     placeholder="Ara..."
                     className="custom-search-input"
-                    suffix={<SearchOutlined style={{ color: '#f9b17a' }} />}
+                    suffix={<SearchOutlined style={{ color: '#ffffff' }} />}
                     style={{
-                        width: 150,
+                        width: 200, // Increased width
                         borderRadius: '20px',
                         backgroundColor: 'transparent',
-                        borderColor: '#f9b17a',
-                        color: '#f9b17a',
-                        fontSize: '12px'
+                        borderColor: '#ffffff',
+                        color: '#ffffff',
+                        fontSize: '14px', // Slightly larger text
+                        padding: '6px 12px' // More internal breathing room
                     }}
-                    size="small"
+                // Removed size="small" for more height/padding
                 />
             </div>
         </AntHeader>
