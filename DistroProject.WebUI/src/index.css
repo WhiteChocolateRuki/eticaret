@@ -143,3 +143,16 @@ code {
   color: #ffffff;
   opacity: 0.7;
 }
+
+/* Fix for Multi-Select Tag Visibility */
+.ant-select-multiple .ant-select-selection-item {
+  background-color: #69c0ff !important;
+  /* Lighter blue */
+  color: #ffffff !important;
+  /* White text */
+  border: none !important;
+}
+
+.ant-select-multiple .ant-select-selection-item-remove {
+  color: #ffffff !important;
+}

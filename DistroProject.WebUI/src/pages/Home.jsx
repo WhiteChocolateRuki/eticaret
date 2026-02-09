@@ -52,7 +52,7 @@ const Home = () => {
                             className="card-content"
                             style={{
                                 flexDirection: isEven ? 'row-reverse' : 'row',
-                                textAlign: isEven ? 'right' : 'left'
+                                textAlign: 'left'
                             }}
                         >
                             <div
@@ -62,7 +62,7 @@ const Home = () => {
                                     paddingLeft: isEven ? '20px' : 0,
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    alignItems: isEven ? 'flex-end' : 'flex-start'
+                                    alignItems: 'flex-start'
                                 }}
                             >
                                 <Title level={4} style={{ color: '#f9b17a', marginBottom: '10px' }}>

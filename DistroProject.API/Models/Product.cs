@@ -23,4 +23,6 @@ public class Product
     public string? ImageContentType { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    public ICollection<Category> Categories { get; set; } = new List<Category>();
 }

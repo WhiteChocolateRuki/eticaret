@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DistroProject.API.Controllers;
 
@@ -54,4 +55,22 @@ public class UsersController : ControllerBase
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return Ok(new { token = tokenHandler.WriteToken(token) });
     }
-} 
+
+    [HttpGet("me")]
+    [Authorize]
+    public ActionResult<object> GetMe()
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        var role = User.FindFirst(ClaimTypes.Role)?.Value;
+        return Ok(new { Id = userId, Role = role });
+    }
+
+    [HttpGet("drivers")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<IEnumerable<User>>> GetDrivers()
+    {
+        return await _context.Users
+            .Where(u => u.Role == "Driver")
+            .ToListAsync();
+    }
+}

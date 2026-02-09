@@ -16,4 +16,6 @@ public class ProductUploadDto
     public int Stock { get; set; }
 
     public IFormFile? ImageFile { get; set; }
+
+    public List<int> CategoryIds { get; set; } = new();
 }

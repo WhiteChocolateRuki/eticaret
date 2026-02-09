@@ -1,8 +1,22 @@
-import { ConfigProvider, Layout } from 'antd';
-import { Routes, Route } from 'react-router-dom';
+import { ConfigProvider, App as AntdApp } from 'antd';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import ProductList from './pages/ProductList';
 import Home from './pages/Home';
 import Header from './components/Header';
+import AuthPage from './pages/AuthPage';
+import AdminLayout from './layouts/AdminLayout';
+import AddProduct from './pages/admin/AddProduct';
+import OrderManagement from './pages/admin/OrderManagement';
+import { AuthProvider } from './context/AuthContext';
+
+const ConsumerLayout = () => (
+  <div className="app-container">
+    <div className="content-container">
+      <Header />
+      <Outlet />
+    </div>
+  </div>
+);
 
 function App() {
   return (
@@ -17,17 +31,28 @@ function App() {
         },
       }}
     >
-      <div className="app-container">
-        <div className="content-container">
-          <Header />
+      <AntdApp>
+        <AuthProvider>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<ProductList />} />
+            {/* Consumer Routes */}
+            <Route element={<ConsumerLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<ProductList />} />
+            </Route>
+
+            {/* Auth Route */}
+            <Route path="/login" element={<AuthPage />} />
+            <Route path="/register" element={<AuthPage />} />
+
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="add-product" element={<AddProduct />} />
+              <Route path="orders" element={<OrderManagement />} />
+            </Route>
           </Routes>
-        </div>
-      </div>
+        </AuthProvider>
+      </AntdApp>
     </ConfigProvider>
   );
 }
-
 export default App;

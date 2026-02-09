@@ -22,7 +22,7 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
     {
-        return await _context.Products.ToListAsync();
+        return await _context.Products.Include(p => p.Categories).ToListAsync();
     }
 
     // ONLY ADMINS CAN ADD PRODUCTS
@@ -39,6 +39,18 @@ public class ProductsController : ControllerBase
             IsActive = true,
             CreatedAt = DateTime.Now
         };
+
+        if (productDto.CategoryIds != null && productDto.CategoryIds.Count > 0)
+        {
+            var categories = await _context.Categories
+                .Where(c => productDto.CategoryIds.Contains(c.Id))
+                .ToListAsync();
+
+            foreach (var category in categories)
+            {
+                product.Categories.Add(category);
+            }
+        }
 
         if (productDto.ImageFile != null && productDto.ImageFile.Length > 0)
         {
