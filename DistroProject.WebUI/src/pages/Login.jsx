@@ -41,8 +41,7 @@ const Login = () => {
                     if (payload.role === 'Admin') {
                         navigate('/admin/orders');
                     } else if (payload.role === 'Driver') {
-                        // navigate('/driver/deliveries'); // Driver page not created yet
-                        navigate('/');
+                        navigate('/driver');
                     } else {
                         navigate('/');
                     }

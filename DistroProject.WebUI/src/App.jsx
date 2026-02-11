@@ -5,8 +5,10 @@ import Home from './pages/Home';
 import Header from './components/Header';
 import AuthPage from './pages/AuthPage';
 import AdminLayout from './layouts/AdminLayout';
-import AddProduct from './pages/admin/AddProduct';
+import ProductManagement from './pages/admin/ProductManagement'; // Import
 import OrderManagement from './pages/admin/OrderManagement';
+import UserManagement from './pages/admin/UserManagement'; // Updated Import
+import DriverPanel from './pages/driver/DriverPanel'; // Import
 import { AuthProvider } from './context/AuthContext';
 
 const ConsumerLayout = () => (
@@ -40,14 +42,18 @@ function App() {
               <Route path="/products" element={<ProductList />} />
             </Route>
 
+            {/* Driver Route */}
+            <Route path="/driver" element={<DriverPanel />} />
+
             {/* Auth Route */}
             <Route path="/login" element={<AuthPage />} />
             <Route path="/register" element={<AuthPage />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLayout />}>
-              <Route path="add-product" element={<AddProduct />} />
+              <Route path="products" element={<ProductManagement />} />
               <Route path="orders" element={<OrderManagement />} />
+              <Route path="users" element={<UserManagement />} />
             </Route>
           </Routes>
         </AuthProvider>
@@ -55,4 +61,5 @@ function App() {
     </ConfigProvider>
   );
 }
+
 export default App;

@@ -67,4 +67,90 @@ public class ProductsController : ControllerBase
 
         return Ok(product);
     }
+
+    // UPDATE PRODUCT
+    [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> PutProduct(int id, [FromForm] ProductUploadDto productDto)
+    {
+        var product = await _context.Products.Include(p => p.Categories).FirstOrDefaultAsync(p => p.Id == id);
+
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        product.Name = productDto.Name;
+        product.Price = productDto.Price;
+        product.UnitType = productDto.UnitType;
+        product.Stock = productDto.Stock;
+
+        // Update Categories
+        if (productDto.CategoryIds != null)
+        {
+            product.Categories.Clear(); // Remove existing relations
+            if (productDto.CategoryIds.Count > 0)
+            {
+                var categories = await _context.Categories
+                    .Where(c => productDto.CategoryIds.Contains(c.Id))
+                    .ToListAsync();
+
+                foreach (var category in categories)
+                {
+                    product.Categories.Add(category);
+                }
+            }
+        }
+
+        // Update Image if provided
+        if (productDto.ImageFile != null && productDto.ImageFile.Length > 0)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await productDto.ImageFile.CopyToAsync(memoryStream);
+                product.Image = memoryStream.ToArray();
+                product.ImageContentType = productDto.ImageFile.ContentType;
+            }
+        }
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ProductExists(id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        return NoContent();
+    }
+
+    // DELETE PRODUCT
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteProduct(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private bool ProductExists(int id)
+    {
+        return _context.Products.Any(e => e.Id == id);
+    }
 }

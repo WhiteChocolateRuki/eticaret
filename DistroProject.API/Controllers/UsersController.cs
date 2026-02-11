@@ -37,6 +37,28 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
+    [HttpPost("create-driver")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<User>> CreateDriver(RegisterDto request)
+    {
+        if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+        {
+            return BadRequest("Email already exists.");
+        }
+
+        var user = new User 
+        { 
+            Name = request.Username, 
+            Email = request.Email, 
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Role = "Driver"
+        };
+        
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+        return Ok(user);
+    }
+
     [HttpPost("login")]
     public async Task<ActionResult<string>> Login([FromBody] LoginDto request)
     {
@@ -82,5 +104,59 @@ public class UsersController : ControllerBase
         return await _context.Users
             .Where(u => u.Role == "Driver")
             .ToListAsync();
+    }
+
+    [HttpPost("create-admin")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<User>> CreateAdmin(RegisterDto request)
+    {
+        if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+        {
+            return BadRequest("Email already exists.");
+        }
+
+        var user = new User 
+        { 
+            Name = request.Username, 
+            Email = request.Email, 
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Role = "Admin"
+        };
+        
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+        return Ok(user);
+    }
+
+    [HttpGet("admins")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<IEnumerable<User>>> GetAdmins()
+    {
+        return await _context.Users
+            .Where(u => u.Role == "Admin")
+            .ToListAsync();
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        // Prevent deleting self (optional but recommended safety check)
+        var currentUserId = User.FindFirst("userId")?.Value;
+        if (currentUserId != null && int.Parse(currentUserId) == id)
+        {
+            return BadRequest("You cannot delete your own account.");
+        }
+
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
 }

@@ -40,10 +40,16 @@ const AdminLayout = () => {
                             onClick: () => navigate('/admin/orders'),
                         },
                         {
-                            key: '/admin/add-product',
+                            key: '/admin/users',
+                            icon: <UnorderedListOutlined />,
+                            label: 'Kullanıcı Yönetimi',
+                            onClick: () => navigate('/admin/users'),
+                        },
+                        {
+                            key: '/admin/products',
                             icon: <UploadOutlined />,
-                            label: 'Ürün Ekle',
-                            onClick: () => navigate('/admin/add-product'),
+                            label: 'Ürün Yönetimi',
+                            onClick: () => navigate('/admin/products'),
                         },
                         {
                             key: 'logout',

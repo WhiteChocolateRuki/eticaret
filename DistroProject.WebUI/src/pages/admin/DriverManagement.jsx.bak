@@ -1,0 +1,145 @@
+import { useState, useEffect } from 'react';
+import { Table, Button, Modal, Form, Input, message, Card } from 'antd';
+import { UserAddOutlined } from '@ant-design/icons';
+
+const DriverManagement = () => {
+    const [drivers, setDrivers] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [form] = Form.useForm();
+
+    const fetchDrivers = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/drivers`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setDrivers(data);
+            } else {
+                message.error('Sürücüler getirilemedi.');
+            }
+        } catch (error) {
+            console.error('Error fetching drivers:', error);
+            message.error('Bir hata oluştu.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchDrivers();
+    }, []);
+
+    const handleAddDriver = async (values) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/create-driver`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(values),
+            });
+
+            if (response.ok) {
+                message.success('Sürücü başarıyla eklendi!');
+                setIsModalVisible(false);
+                form.resetFields();
+                fetchDrivers();
+            } else {
+                const errorData = await response.text();
+                message.error(`Hata: ${errorData}`);
+            }
+        } catch (error) {
+            console.error('Error adding driver:', error);
+            message.error('Sürücü eklenirken bir hata oluştu.');
+        }
+    };
+
+    const columns = [
+        {
+            title: 'ID',
+            dataIndex: 'id',
+            key: 'id',
+        },
+        {
+            title: 'İsim',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'E-posta',
+            dataIndex: 'email',
+            key: 'email',
+        },
+        // Add more columns as needed
+    ];
+
+    return (
+        <div>
+            <Card title="Sürücü Yönetimi" extra={
+                <Button type="primary" icon={<UserAddOutlined />} onClick={() => setIsModalVisible(true)}>
+                    Sürücü Ekle
+                </Button>
+            }>
+                <Table
+                    dataSource={drivers}
+                    columns={columns}
+                    rowKey="id"
+                    loading={loading}
+                />
+            </Card>
+
+            <Modal
+                title="Yeni Sürücü Ekle"
+                open={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                footer={null}
+            >
+                <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={handleAddDriver}
+                >
+                    <Form.Item
+                        name="username"
+                        label="Kullanıcı Adı"
+                        rules={[{ required: true, message: 'Lütfen kullanıcı adı girin!' }]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="email"
+                        label="E-posta"
+                        rules={[
+                            { required: true, message: 'Lütfen e-posta girin!' },
+                            { type: 'email', message: 'Geçerli bir e-posta girin!' }
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="password"
+                        label="Şifre"
+                        rules={[{ required: true, message: 'Lütfen şifre girin!' }]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" block>
+                            Ekle
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+        </div>
+    );
+};
+
+export default DriverManagement;
