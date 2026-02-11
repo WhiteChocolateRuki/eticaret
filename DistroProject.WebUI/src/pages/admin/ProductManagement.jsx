@@ -79,7 +79,8 @@ const ProductManagement = () => {
                 message.success('Ürün başarıyla silindi.');
                 fetchProducts();
             } else {
-                message.error('Silme işlemi başarısız.');
+                const errorText = await response.text();
+                message.error(`Silme başarısız: ${errorText}`);
             }
         } catch (error) {
             console.error('Error deleting product:', error);

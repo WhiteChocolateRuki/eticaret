@@ -137,14 +137,36 @@ public class ProductsController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
-        var product = await _context.Products.FindAsync(id);
+        var product = await _context.Products
+            .Include(p => p.Categories)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
         if (product == null)
         {
             return NotFound();
         }
 
-        _context.Products.Remove(product);
-        await _context.SaveChangesAsync();
+        try
+        {
+            // 1. Clear ProductCategory join table
+            product.Categories.Clear();
+
+            // 2. Delete related orders
+            var associatedOrders = await _context.Orders.Where(o => o.ProductId == id).ToListAsync();
+            if (associatedOrders.Any())
+            {
+                _context.Orders.RemoveRange(associatedOrders);
+            }
+
+            // 3. Delete the product
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            var innerMsg = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+            return BadRequest($"Silme işlemi sırasında hata: {innerMsg}");
+        }
 
         return NoContent();
     }

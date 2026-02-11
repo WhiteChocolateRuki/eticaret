@@ -10,6 +10,8 @@ import OrderManagement from './pages/admin/OrderManagement';
 import UserManagement from './pages/admin/UserManagement'; // Updated Import
 import DriverPanel from './pages/driver/DriverPanel'; // Import
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
+import CartPage from './pages/CartPage';
 
 const ConsumerLayout = () => (
   <div className="app-container">
@@ -35,27 +37,30 @@ function App() {
     >
       <AntdApp>
         <AuthProvider>
-          <Routes>
-            {/* Consumer Routes */}
-            <Route element={<ConsumerLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/products" element={<ProductList />} />
-            </Route>
+          <CartProvider>
+            <Routes>
+              {/* Consumer Routes */}
+              <Route element={<ConsumerLayout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/products" element={<ProductList />} />
+                <Route path="/cart" element={<CartPage />} />
+              </Route>
 
-            {/* Driver Route */}
-            <Route path="/driver" element={<DriverPanel />} />
+              {/* Driver Route */}
+              <Route path="/driver" element={<DriverPanel />} />
 
-            {/* Auth Route */}
-            <Route path="/login" element={<AuthPage />} />
-            <Route path="/register" element={<AuthPage />} />
+              {/* Auth Route */}
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/register" element={<AuthPage />} />
 
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route path="products" element={<ProductManagement />} />
-              <Route path="orders" element={<OrderManagement />} />
-              <Route path="users" element={<UserManagement />} />
-            </Route>
-          </Routes>
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route path="products" element={<ProductManagement />} />
+                <Route path="orders" element={<OrderManagement />} />
+                <Route path="users" element={<UserManagement />} />
+              </Route>
+            </Routes>
+          </CartProvider>
         </AuthProvider>
       </AntdApp>
     </ConfigProvider>

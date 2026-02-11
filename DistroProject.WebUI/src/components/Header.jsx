@@ -1,9 +1,10 @@
 import React from 'react';
-import { Layout, Typography, Flex, Button, Input } from 'antd';
+import { Layout, Typography, Flex, Button, Input, Badge } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartOutlined, SearchOutlined, DashboardOutlined, CarOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
 import logo from '../assets/with-back.png';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 const { Header: AntHeader } = Layout;
 const { Title } = Typography;
@@ -11,6 +12,7 @@ const { Title } = Typography;
 const Header = () => {
     const navigate = useNavigate();
     const { user, logout, isAuthenticated } = useAuth();
+    const { cartItemCount } = useCart();
 
     const handleLogout = () => {
         logout();
@@ -87,7 +89,9 @@ const Header = () => {
 
             {/* Right: Cart and Search */}
             <Flex align="center" gap={5} style={{ flex: 1, justifyContent: 'flex-end' }}>
-                <Button type="text" icon={<ShoppingCartOutlined style={{ fontSize: '20px', color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }} />} />
+                <Badge count={cartItemCount} size="small" offset={[-2, 2]} style={{ backgroundColor: '#ff4d4f', boxShadow: '0 0 0 2px #2d2250' }}>
+                    <Button type="text" onClick={() => navigate('/cart')} icon={<ShoppingCartOutlined style={{ fontSize: '20px', color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }} />} />
+                </Badge>
                 <Input
                     placeholder="Ara..."
                     className="custom-search-input"
