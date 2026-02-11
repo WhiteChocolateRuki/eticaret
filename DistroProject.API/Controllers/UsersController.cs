@@ -22,19 +22,27 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<User>> Register(User user)
+    public async Task<ActionResult<User>> Register(RegisterDto request)
     {
+        var user = new User 
+        { 
+            Name = request.Username, 
+            Email = request.Email, 
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Role = "Customer"
+        };
+        
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return Ok(user);
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<string>> Login([FromBody] User loginUser)
+    public async Task<ActionResult<string>> Login([FromBody] LoginDto request)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginUser.Email);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
-        if (user == null || user.PasswordHash != loginUser.PasswordHash) 
+        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) 
         {
             return BadRequest("Invalid email or password!");
         }
@@ -55,6 +63,8 @@ public class UsersController : ControllerBase
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return Ok(new { token = tokenHandler.WriteToken(token) });
     }
+
+
 
     [HttpGet("me")]
     [Authorize]

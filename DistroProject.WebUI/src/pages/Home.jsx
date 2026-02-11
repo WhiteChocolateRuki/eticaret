@@ -59,7 +59,7 @@ const Home = () => {
                                 className="text-section"
                                 style={{
                                     paddingRight: isEven ? 0 : '20px',
-                                    paddingLeft: isEven ? '20px' : 0,
+                                    paddingLeft: isEven ? '60px' : 0,
                                     display: 'flex',
                                     flexDirection: 'column',
                                     alignItems: 'flex-start'

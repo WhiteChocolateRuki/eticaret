@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using DistroProject.API.Models;
+using System.Collections.Generic;
 
 namespace DistroProject.API.Data;
 
@@ -21,6 +22,13 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Product>()
             .HasMany(p => p.Categories)
             .WithMany(c => c.Products)
-            .UsingEntity(j => j.ToTable("ProductCategory"));
+            .UsingEntity(
+                "ProductCategory",
+                r => r.HasOne(typeof(Category)).WithMany().HasForeignKey("CategoryId"),
+                l => l.HasOne(typeof(Product)).WithMany().HasForeignKey("ProductId"),
+                j => 
+                {
+                    j.HasKey("ProductId", "CategoryId");
+                });
     }
 }

@@ -28,19 +28,18 @@ const Header = () => {
             // boxShadow: '0 2px 8px rgba(0,0,0,0.15)' // Removed shadow for cleaner look
         }}>
             {/* Left: Logo and Brand */}
-            <Flex align="center" gap="small" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+            <Flex align="center" gap="small" style={{ cursor: 'pointer', flex: 1 }} onClick={() => navigate('/')}>
                 <img src={logo} alt="Albatros Logo" style={{ height: '40px', width: '40px', borderRadius: '50%' }} />
                 <Title level={3} style={{ margin: 0, color: '#fff', lineHeight: '1' }}>
                     ALBATROS
                 </Title>
             </Flex>
 
-            {/* Center: Navigation and Cart */}
-            <Flex align="center" gap="large">
-                <Button type="link" onClick={() => navigate('/')} style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Anasayfa</Button>
-                <Button type="link" onClick={() => navigate('/products')} style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Ürünler</Button>
-                <Button type="link" onClick={() => navigate('/products')} style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Kategoriler</Button>
-                <Button type="link" style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Hakkımızda</Button>
+            {/* Center: Navigation */}
+            <Flex align="center" gap="small" style={{ flex: 1, justifyContent: 'center' }}>
+                <Button type="link" onClick={() => navigate('/')} style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Home</Button>
+                <Button type="link" onClick={() => navigate('/products')} style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Products</Button>
+                <Button type="link" style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>About Us</Button>
 
                 {/* Role Based Links */}
                 {isAuthenticated && user?.role === 'Admin' && (
@@ -50,7 +49,7 @@ const Header = () => {
                         onClick={() => navigate('/admin/orders')}
                         style={{ color: '#f9b17a', textShadow: '0 2px 4px rgba(0,0,0,0.5)', fontWeight: 'bold' }}
                     >
-                        Admin Paneli
+                        Admin Panel
                     </Button>
                 )}
 
@@ -61,7 +60,7 @@ const Header = () => {
                         // onClick={() => navigate('/driver')} // Placeholder
                         style={{ color: '#f9b17a', textShadow: '0 2px 4px rgba(0,0,0,0.5)', fontWeight: 'bold' }}
                     >
-                        Şoför Paneli
+                        Driver Panel
                     </Button>
                 )}
 
@@ -72,7 +71,7 @@ const Header = () => {
                         onClick={handleLogout}
                         style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
                     >
-                        Çıkış Yap
+                        Log Out
                     </Button>
                 ) : (
                     <Button
@@ -81,14 +80,14 @@ const Header = () => {
                         onClick={() => navigate('/login')}
                         style={{ color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
                     >
-                        Giriş Yap / Kayıt Ol
+                        Login / Register
                     </Button>
                 )}
-
-                <Button type="text" icon={<ShoppingCartOutlined style={{ fontSize: '20px', color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }} />} />
             </Flex>
 
-            <div style={{ paddingLeft: '20px' }}>
+            {/* Right: Cart and Search */}
+            <Flex align="center" gap={5} style={{ flex: 1, justifyContent: 'flex-end' }}>
+                <Button type="text" icon={<ShoppingCartOutlined style={{ fontSize: '20px', color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }} />} />
                 <Input
                     placeholder="Ara..."
                     className="custom-search-input"
@@ -104,7 +103,7 @@ const Header = () => {
                     }}
                 // Removed size="small" for more height/padding
                 />
-            </div>
+            </Flex>
         </AntHeader>
     );
 };
